@@ -1,0 +1,118 @@
+---
+title: "P8105_hw4_yc4779"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(plotly)
+
+# load data
+noaa_data = read_csv("data/nynoaadat.csv")
+
+# clean and sample data since it's too large
+set.seed(123)
+weather_df = noaa_data %>%
+  sample_n(50000) %>%
+  separate(date, into = c("year", "month", "day"), sep = "-") %>%
+  mutate(
+    year = as.numeric(year),
+    month = as.numeric(month),
+    tmax = as.numeric(tmax) / 10,
+    tmin = as.numeric(tmin) / 10,
+    prcp = as.numeric(prcp) / 10,
+    snow = as.numeric(snow)
+  ) %>%
+  filter(!is.na(tmax), !is.na(tmin), !is.na(prcp))
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Temperature Trends Over Years
+
+```{r}
+# scatter plot showing temperature trends
+temp_plot = weather_df %>%
+  group_by(year) %>%
+  summarize(
+    avg_tmax = mean(tmax, na.rm = TRUE),
+    avg_tmin = mean(tmin, na.rm = TRUE)
+  ) %>%
+  plot_ly(x = ~year, y = ~avg_tmax, type = 'scatter', mode = 'lines+markers',
+          name = 'Max Temp', line = list(color = 'red')) %>%
+  add_trace(y = ~avg_tmin, name = 'Min Temp', line = list(color = 'blue')) %>%
+  layout(
+    xaxis = list(title = "Year"),
+    yaxis = list(title = "Temperature (°C)"),
+    hovermode = "x unified"
+  )
+
+temp_plot
+```
+
+### Monthly Precipitation
+
+```{r}
+# bar plot for average precipitation by month
+precip_plot = weather_df %>%
+  group_by(month) %>%
+  summarize(avg_precip = mean(prcp, na.rm = TRUE)) %>%
+  mutate(month_name = month.abb[month]) %>%
+  plot_ly(x = ~month_name, y = ~avg_precip, type = 'bar',
+          marker = list(color = 'skyblue')) %>%
+  layout(
+    xaxis = list(title = "Month"),
+    yaxis = list(title = "Average Precipitation (mm)")
+  )
+
+precip_plot
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Temperature Distribution by Season
+
+```{r}
+# box plot showing temperature distribution
+season_df = weather_df %>%
+  mutate(
+    season = case_when(
+      month %in% c(12, 1, 2) ~ "Winter",
+      month %in% c(3, 4, 5) ~ "Spring",
+      month %in% c(6, 7, 8) ~ "Summer",
+      month %in% c(9, 10, 11) ~ "Fall"
+    )
+  )
+
+box_plot = plot_ly(season_df, y = ~tmax, color = ~season, type = "box",
+                   colors = c("Winter" = "lightblue", "Spring" = "lightgreen",
+                              "Summer" = "orange", "Fall" = "brown")) %>%
+  layout(
+    yaxis = list(title = "Maximum Temperature (°C)"),
+    xaxis = list(title = "Season")
+  )
+
+box_plot
+```
+
+### Snowfall Distribution
+
+```{r}
+# histogram of snowfall amounts
+snow_plot = weather_df %>%
+  filter(snow > 0, snow < 100) %>%
+  plot_ly(x = ~snow, type = 'histogram',
+          marker = list(color = 'lightsteelblue')) %>%
+  layout(
+    xaxis = list(title = "Snowfall (mm)"),
+    yaxis = list(title = "Count")
+  )
+
+snow_plot
+```
