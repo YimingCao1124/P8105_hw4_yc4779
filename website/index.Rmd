@@ -1,0 +1,14 @@
+---
+title: "Welcome"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+# About
+
+I'm a data science practitioner with a strong foundation in statistical modeling, data engineering, and machine learning. I hold a B.S. in Statistics from UC Davis and will begin my graduate studies at Columbia University. Previously, I interned at Tencent's Sustainable Social Value (SSV) Data & AI Center, where I participated in the development of large language model (LLM) applications and contributed to machine learning and data science projects.
+
+My work focuses on transforming complex, high-dimensional data into structured, interpretable insights to support evidence-based decision-making. I'm proficient in Python, R, and SQL, and experienced across the full data pipeline—from preprocessing and modeling to visualization and communication. I aim to develop scalable, data-driven systems that can drive impact across sectors like health, sustainability, and public services.

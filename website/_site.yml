@@ -1,0 +1,20 @@
+name: "Yiming Cao"
+navbar:
+  title: "Yiming Cao"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Resume"
+      href: resume.html
+  right:
+    - text: "GitHub"
+      href: "https://github.com/YimingCao1124"
+    - text: "Email"
+      href: "mailto:nickcao1124@gmail.com"
+    - text: "LinkedIn"
+      href: "https://www.linkedin.com/in/yiming-cao/"
+output_dir: "."
+output:
+  html_document:
+    theme: cosmo
+    toc: false
